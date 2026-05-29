@@ -27,15 +27,9 @@ function AccuracyBadge({ accuracy }: { accuracy: "A+" | "A" | "B+" }) {
   );
 }
 
-function QuickActions({ contact, onReveal }: { contact: Contact; onReveal: () => void }) {
+function QuickActions({ contact }: { contact: Contact }) {
   return (
     <div className="flex items-center gap-1.5">
-      {/* Email icon */}
-      <button className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors" title="Email">
-        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      </button>
       {/* Phone icon */}
       <button className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors" title="Phone">
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -47,13 +41,6 @@ function QuickActions({ contact, onReveal }: { contact: Contact; onReveal: () =>
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
         </svg>
-      </button>
-      {/* Reveal button */}
-      <button
-        onClick={onReveal}
-        className="text-xs font-semibold px-2.5 py-1 rounded border border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-colors whitespace-nowrap"
-      >
-        Reveal
       </button>
     </div>
   );
@@ -241,7 +228,7 @@ export default function ContactTable({ contacts, query }: ContactTableProps) {
                 </button>
               </th>
               <th className="text-left text-xs font-semibold text-gray-500 px-3 py-3 whitespace-nowrap">
-                Quick Actions
+                Email
               </th>
               <th className="text-left text-xs font-semibold text-gray-500 px-3 py-3 whitespace-nowrap">
                 <button className="flex items-center gap-1 hover:text-gray-800">
@@ -320,9 +307,18 @@ export default function ContactTable({ contacts, query }: ContactTableProps) {
                   </button>
                 </td>
 
-                {/* Quick Actions */}
+                {/* Email */}
                 <td className="px-3 py-3">
-                  <QuickActions contact={contact} onReveal={() => setDetail(contact)} />
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="text-blue-700 hover:text-blue-900 text-sm hover:underline whitespace-nowrap"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {contact.email}
+                    </a>
+                    <QuickActions contact={contact} />
+                  </div>
                 </td>
 
                 {/* Job Title */}
