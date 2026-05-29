@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZoomInfo | B2B Contact & Company Intelligence",
-  description: "Find the right people. Close more deals. Access 265M+ verified professional profiles.",
+  title: "ZoomInfo",
+  description: "B2B Contact & Company Intelligence Platform",
 };
 
 export default function RootLayout({
