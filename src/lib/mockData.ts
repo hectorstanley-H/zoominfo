@@ -23,6 +23,28 @@ export interface Contact {
 
 export const MOCK_CONTACTS: Contact[] = [
   {
+    id: "0",
+    firstName: "Jared",
+    lastName: "Maldonado",
+    title: "Real Estate Investor",
+    company: "Maldonado Properties",
+    companySize: "1–50",
+    industry: "Real Estate",
+    primaryIndustry: "Real Estate",
+    location: "San Antonio, TX",
+    email: "j.maldonado@maldonadoproperties.com",
+    emailRevealed: true,
+    phone: "(210) 555-0100",
+    phoneRevealed: false,
+    department: "Executive",
+    managementLevel: "C-Suite",
+    companyRevenue: "$1M–$10M",
+    linkedinUrl: "#",
+    avatar: "JM",
+    companyLogo: "MP",
+    accuracy: "A+",
+  },
+  {
     id: "1",
     firstName: "Ed",
     lastName: "Patton",
