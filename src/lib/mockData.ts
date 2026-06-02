@@ -48,6 +48,28 @@ export interface Contact {
 
 export const MOCK_CONTACTS: Contact[] = [
   {
+    id: "ec",
+    firstName: "Erasmo",
+    lastName: "Cantu",
+    title: "Real Estate Investor",
+    company: "Cantu Real Estate Group",
+    companySize: "1–50",
+    industry: "Real Estate",
+    primaryIndustry: "Real Estate",
+    location: "San Antonio, TX",
+    email: "e.cantu@canturealestategroup.com",
+    emailRevealed: true,
+    phone: "(210) 555-0099",
+    phoneRevealed: false,
+    department: "Executive",
+    managementLevel: "C-Suite",
+    companyRevenue: "$1M–$10M",
+    linkedinUrl: "#",
+    avatar: "EC",
+    companyLogo: "CR",
+    accuracy: "A+",
+  },
+  {
     id: "0",
     firstName: "Jared",
     lastName: "Maldonado",
