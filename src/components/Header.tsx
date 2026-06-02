@@ -1,11 +1,21 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 const NAV_TABS = ["Advanced Search", "Lists", "WebSights", "Tools & Integrations"];
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  function handleSearch(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      const q = query.trim();
+      router.push(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
+    }
+  }
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -28,6 +38,9 @@ export default function Header() {
             </svg>
             <input
               type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleSearch}
               placeholder="Search for companies, contacts, industries, etc."
               className="flex-1 text-xs text-gray-700 placeholder-gray-400 focus:outline-none bg-transparent min-w-0"
             />
