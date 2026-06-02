@@ -48,6 +48,28 @@ export interface Contact {
 
 export const MOCK_CONTACTS: Contact[] = [
   {
+    id: "trs",
+    firstName: "Tiffinie Rose",
+    lastName: "Solano",
+    title: "Real Estate Agent & Property Specialist",
+    company: "Solano Realty Group",
+    companySize: "1–50",
+    industry: "Real Estate",
+    primaryIndustry: "Real Estate",
+    location: "San Antonio, TX",
+    email: "t.solano@solanorealtygroup.com",
+    emailRevealed: true,
+    phone: "(210) 555-0067",
+    phoneRevealed: false,
+    department: "Sales",
+    managementLevel: "Senior IC",
+    companyRevenue: "$1M–$10M",
+    linkedinUrl: "#",
+    avatar: "TS",
+    companyLogo: "SR",
+    accuracy: "A+",
+  },
+  {
     id: "srn",
     firstName: "Sainath Reddy",
     lastName: "Nadapu",
