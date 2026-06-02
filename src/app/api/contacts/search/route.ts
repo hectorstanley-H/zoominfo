@@ -16,7 +16,7 @@
  * Response: { contacts, total, limit, offset, query, filters }
  */
 
-import { MOCK_CONTACTS, type Contact } from "@/lib/mockData";
+import { MOCK_CONTACTS, contactMatchesQuery, type Contact } from "@/lib/mockData";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -45,23 +45,7 @@ export async function GET(request: Request) {
   const offset = isNaN(rawOffset) ? 0 : Math.max(0, rawOffset);
 
   const filtered: Contact[] = MOCK_CONTACTS.filter((c) => {
-    // Free-text match
-    if (q) {
-      const needle = q.toLowerCase();
-      const haystack = [
-        c.firstName,
-        c.lastName,
-        c.title,
-        c.company,
-        c.email,
-        c.department,
-        c.location,
-        c.primaryIndustry,
-      ]
-        .join(" ")
-        .toLowerCase();
-      if (!haystack.includes(needle)) return false;
-    }
+    if (!contactMatchesQuery(c, q)) return false;
 
     if (managementLevel.length && !managementLevel.includes(c.managementLevel))
       return false;

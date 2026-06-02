@@ -1,3 +1,28 @@
+/**
+ * Returns true if every word in `query` appears somewhere in the contact's
+ * combined text fields (case-insensitive). Handles full names, reversed names,
+ * and cross-field queries like "jared c-suite" or "maldonado jared".
+ */
+export function contactMatchesQuery(c: Contact, query: string): boolean {
+  if (!query.trim()) return true;
+  const haystack = [
+    c.firstName,
+    c.lastName,
+    `${c.firstName} ${c.lastName}`,
+    c.title,
+    c.company,
+    c.email,
+    c.department,
+    c.location,
+    c.primaryIndustry,
+    c.managementLevel,
+  ]
+    .join(" ")
+    .toLowerCase();
+  const words = query.toLowerCase().trim().split(/\s+/);
+  return words.every((word) => haystack.includes(word));
+}
+
 export interface Contact {
   id: string;
   firstName: string;

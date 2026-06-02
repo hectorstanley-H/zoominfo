@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import FilterPanel, { Filters } from "@/components/FilterPanel";
 import ContactTable from "@/components/ContactTable";
-import { MOCK_CONTACTS, Contact } from "@/lib/mockData";
+import { MOCK_CONTACTS, Contact, contactMatchesQuery } from "@/lib/mockData";
 
 function SearchInner() {
   const searchParams = useSearchParams();
@@ -19,16 +19,7 @@ function SearchInner() {
   });
 
   const filtered: Contact[] = MOCK_CONTACTS.filter((c) => {
-    const q = initialQuery.toLowerCase();
-    const matchesQuery =
-      !q ||
-      c.firstName.toLowerCase().includes(q) ||
-      c.lastName.toLowerCase().includes(q) ||
-      c.title.toLowerCase().includes(q) ||
-      c.company.toLowerCase().includes(q) ||
-      c.email.toLowerCase().includes(q) ||
-      c.department.toLowerCase().includes(q) ||
-      c.location.toLowerCase().includes(q);
+    const matchesQuery = contactMatchesQuery(c, initialQuery);
 
     const matchesLevel =
       filters.managementLevel.length === 0 || filters.managementLevel.includes(c.managementLevel);
