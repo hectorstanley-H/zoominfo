@@ -48,6 +48,28 @@ export interface Contact {
 
 export const MOCK_CONTACTS: Contact[] = [
   {
+    id: "bjk",
+    firstName: "Barbara Jeanne",
+    lastName: "Koehrer",
+    title: "Real Estate Agent & Property Consultant",
+    company: "Koehrer Realty",
+    companySize: "1–50",
+    industry: "Real Estate",
+    primaryIndustry: "Real Estate",
+    location: "San Antonio, TX",
+    email: "b.koehrer@koehrerrealty.com",
+    emailRevealed: true,
+    phone: "(210) 555-0070",
+    phoneRevealed: false,
+    department: "Sales",
+    managementLevel: "Senior IC",
+    companyRevenue: "$1M–$10M",
+    linkedinUrl: "#",
+    avatar: "BK",
+    companyLogo: "KR",
+    accuracy: "A+",
+  },
+  {
     id: "tp",
     firstName: "Tyler",
     lastName: "Perez",
