@@ -31,10 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Pinned to the integration-test branch of H-Action — this branch bundles
-      # tester-h 0.3.0-xray-test.0 as a local tarball because the CLI-side Xray
-      # code is not yet on npm. Swap to `hcompai/H-Action@v2` once 0.3.0 ships.
-      - uses: hcompai/H-Action@xray-integration-test
+      # Vendored local action under .github/actions/tester-h-xray/ — the upstream
+      # hcompai/H-Action repo is private/internal so cross-repo `uses:` doesn't
+      # work without a PAT. Once the action publishes a public v2, swap this to
+      # `uses: hcompai/H-Action@v2`.
+      - uses: ./.github/actions/tester-h-xray
         with:
           api_key: ${{ secrets.HAI_API_KEY }}
 

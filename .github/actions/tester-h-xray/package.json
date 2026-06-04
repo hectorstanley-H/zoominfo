@@ -1,0 +1,18 @@
+{
+  "name": "h-action",
+  "version": "0.2.0",
+  "description": "GitHub Action that replays tester-h journeys on every PR, auto-corrects stale ones, and suggests new ones from the diff.",
+  "type": "module",
+  "main": "dist/orchestrator.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.5.0"
+  }
+}

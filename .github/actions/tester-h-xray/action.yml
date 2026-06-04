@@ -1,0 +1,180 @@
+name: 'Tester H'
+description: 'Replay your tester-h journeys on every PR, auto-correct stale ones, and suggest new journeys for the code that changed.'
+branding:
+  icon: 'monitor'
+  color: 'purple'
+
+inputs:
+  api_key:
+    description: 'HAI API key. Exported as HAI_API_KEY for the tester-h CLI.'
+    required: true
+  github_token:
+    description: 'GitHub token used to fetch the PR diff and post the review comment.'
+    required: false
+    default: ${{ github.token }}
+
+  # ── App lifecycle ──
+  build_command:
+    description: 'Command to build the application (e.g., npm run build).'
+    required: false
+    default: ''
+  start_command:
+    description: 'Command to start the application server(s). Use & for parallel processes.'
+    required: true
+  app_url:
+    description: 'URL where the running app can be reached.'
+    required: false
+    default: 'http://localhost:3000'
+  health_check_url:
+    description: 'Health check endpoint URL. Polled until HTTP 2xx. Defaults to app_url.'
+    required: false
+    default: ''
+  health_check_timeout:
+    description: 'Seconds to wait for the health check to pass.'
+    required: false
+    default: '120'
+  env:
+    description: 'Environment variables for build/start commands (KEY=value, one per line).'
+    required: false
+    default: ''
+
+  # ── Trajectory replay ──
+  trajectories_dir:
+    description: 'Directory of recorded tester-h trajectories. Defaults to .tester-h/trajectories.'
+    required: false
+    default: '.tester-h/trajectories'
+  replay_strict:
+    description: 'Run replay-all in strict mode (no semantic fallback, no auto-correct). Default false.'
+    required: false
+    default: 'false'
+  replay_timeout:
+    description: 'Seconds before the replay phase is killed.'
+    required: false
+    default: '900'
+
+  # ── Diff-aware suggestion pass ──
+  # Two-stage pipeline: (1) Claude reads the diff + existing trajectories and
+  # decides whether a coverage gap warrants new journeys; (2) for each
+  # approved journey, the tester-h CLI drives Holo3 in --record mode to
+  # capture a real trajectory file.
+  suggest_journeys:
+    description: 'On PRs, ask Claude whether the diff opens a coverage gap; if so, record up to max_new_journeys new trajectories with Holo3.'
+    required: false
+    default: 'true'
+  anthropic_api_key:
+    description: 'Anthropic API key for the planner step. Required when suggest_journeys=true; never used for replay or audit.'
+    required: false
+    default: ''
+  planner_model:
+    description: 'Claude model id for the planner. Defaults to Opus 4.7.'
+    required: false
+    default: 'claude-sonnet-4-6'
+  max_new_journeys:
+    description: 'Hard cap on new trajectories per run. The planner is biased to suggest fewer; this is an upper bound.'
+    required: false
+    default: '2'
+  suggestion_timeout:
+    description: 'Seconds each Holo3 recording is allowed to run.'
+    required: false
+    default: '600'
+
+  # ── Deterministic page audit (replaces the old free-form `task:`) ──
+  run_audit:
+    description: 'Run `tester-h audit <app_url>` after replays for SEO/a11y/links/hygiene checks.'
+    required: false
+    default: 'true'
+
+  # ── Agent / model selection ──
+  agent_mode:
+    description: 'Agent backend for the suggestion pass: "local" (Holo3 in-process, can record) or "cloud" (AGP, no record).'
+    required: false
+    default: 'local'
+  agent_id:
+    description: 'AGP agent id when agent_mode=cloud.'
+    required: false
+    default: ''
+  base_url:
+    description: 'Self-hosted Holo3 OpenAI-compatible endpoint (skips Models API auth).'
+    required: false
+    default: ''
+  model:
+    description: 'Override the Holo3 model id.'
+    required: false
+    default: ''
+
+  # ── Browser settings (used for replays and suggestion runs) ──
+  viewport_width:
+    description: 'Browser viewport width in pixels.'
+    required: false
+    default: '1280'
+  viewport_height:
+    description: 'Browser viewport height in pixels.'
+    required: false
+    default: '720'
+
+  # ── Xray integration (opt-in — leave xray_plan empty to disable) ──
+  # When `xray_plan` is set, the orchestrator inserts an "Xray phase" between
+  # health-check and replay-all. It pulls the listed Test Plan, runs each Test
+  # through the agent against `app_url`, pushes a single Test Execution, and
+  # auto-files Jira bugs for FAILs. The PR comment gains a "Xray plan execution"
+  # section with the execution link + bug list. Unset = behaviour unchanged.
+  xray_plan:
+    description: 'Xray Test Plan key (e.g. PROJ-1234). Set to enable the Xray phase. Empty = disabled.'
+    required: false
+    default: ''
+  jira_base_url:
+    description: 'Jira Cloud base URL, e.g. https://your-org.atlassian.net. Required when xray_plan is set.'
+    required: false
+    default: ''
+  jira_user:
+    description: 'Jira email for basic auth. Required when xray_plan is set.'
+    required: false
+    default: ''
+  jira_token:
+    description: 'Jira API token (id.atlassian.com/manage-profile/security/api-tokens). Required when xray_plan is set.'
+    required: false
+    default: ''
+  xray_client_id:
+    description: 'Xray Cloud API client_id (Xray → Global Settings → API Keys). Required when xray_plan is set.'
+    required: false
+    default: ''
+  xray_client_secret:
+    description: 'Xray Cloud API client_secret. Required when xray_plan is set.'
+    required: false
+    default: ''
+  xray_no_bugs:
+    description: 'Skip Jira bug filing on FAIL (use when noise control matters more than coverage). Default false.'
+    required: false
+    default: 'false'
+  xray_project_key:
+    description: 'Override the Jira project key for bug creation. Default: inferred from xray_plan prefix.'
+    required: false
+    default: ''
+  xray_issue_type:
+    description: 'Jira issue type for auto-filed bugs. Default: Bug. Use Task on instances without a Bug type.'
+    required: false
+    default: 'Bug'
+
+  # ── CLI version pinning ──
+  tester_h_version:
+    description: 'npm version spec for the tester-h CLI installed in the action container.'
+    required: false
+    default: 'latest'
+
+outputs:
+  result:
+    description: 'Overall result: pass (every trajectory replayed cleanly) or fail.'
+  replay_summary:
+    description: 'JSON summary of the replay-all run.'
+  audit_summary:
+    description: 'JSON summary of the audit pass (empty when run_audit=false).'
+  xray_summary:
+    description: 'JSON summary of the Xray phase (empty when xray_plan is not set).'
+  new_files:
+    description: 'Newline-separated list of new trajectory/variant files written under trajectories_dir.'
+  comment_url:
+    description: 'URL of the PR comment posted by the action (empty when not running on a PR).'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
