@@ -1,0 +1,59 @@
+# tester-h × Xray — runs the QA Test Plan TH-1 against the public Vercel
+# preview on every PR + on push to main.
+#
+# What this does, in order:
+#   1. tester-h xray pull --plan TH-1     (fetches 5 tests from Jira/Xray)
+#   2. For each test: drives Holo3 vision agent against the Vercel URL below
+#   3. Pushes a single Test Execution back to Xray Cloud
+#   4. Auto-files Jira "Task" issues for any FAILs (TH project has no Bug type)
+#   5. Posts a PR comment with the Xray section
+#
+# Note: we don't `npm run start` here — the app is already public on Vercel,
+# so we point `app_url` straight at the deployment and use `tail -f /dev/null`
+# as a no-op start command to satisfy the action's required input.
+#
+# Secrets required (already set on this repo via `gh secret set`):
+#   HAI_API_KEY, JIRA_USER, JIRA_TOKEN, XRAY_CLIENT_ID, XRAY_CLIENT_SECRET
+
+name: tester-h × Xray
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to the integration-test branch of H-Action — this branch bundles
+      # tester-h 0.3.0-xray-test.0 as a local tarball because the CLI-side Xray
+      # code is not yet on npm. Swap to `hcompai/H-Action@v2` once 0.3.0 ships.
+      - uses: hcompai/H-Action@xray-integration-test
+        with:
+          api_key: ${{ secrets.HAI_API_KEY }}
+
+          # App is already deployed publicly on Vercel — no build/start needed.
+          start_command: 'tail -f /dev/null'
+          app_url: 'https://zoominfo-livid.vercel.app/search'
+          health_check_timeout: '60'
+
+          # Skip the planner pass (no ANTHROPIC_API_KEY here; that's optional).
+          suggest_journeys: 'false'
+
+          # ── Xray phase ──
+          xray_plan: 'TH-1'
+          jira_base_url: 'https://h-demo-eng.atlassian.net'
+          jira_user: ${{ secrets.JIRA_USER }}
+          jira_token: ${{ secrets.JIRA_TOKEN }}
+          xray_client_id: ${{ secrets.XRAY_CLIENT_ID }}
+          xray_client_secret: ${{ secrets.XRAY_CLIENT_SECRET }}
+          # The TH demo project has no "Bug" issue type — file auto-bugs as Tasks.
+          xray_issue_type: 'Task'
+          # 15 min budget. TH-1 has 5 tests × ~30-60s each → plenty of headroom.
+          xray_timeout: '900'
